@@ -24,3 +24,5 @@ jobs:
       # 3 show the secret
       - name: show the secret
         run: echo "$MY_SECRET"
+      - name: show the variable
+        run: echo "${{MY_VARIABLE}}"
