@@ -5,10 +5,13 @@ on:
     branches:
       - master
   workflow_dispatch:
+  
 
 jobs:
   show-html:
     runs-on: ubuntu-latest
+    env:
+      MY_SECRET: ${{ secrets.MY_SECRET }} 
 
     steps:
       # 1 Repo içeriğini indir
@@ -20,4 +23,4 @@ jobs:
         run: cat index.html
       # 3 show the secret
       - name: show the secret
-        run: cat ${{secrets_MY_SECRET}}
+        run: echo "$MY_SECRET"
