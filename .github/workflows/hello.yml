@@ -9,6 +9,8 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    env:
+      DOCKER_USERNAME: ${{secrets_secrets.DOCKER_USERNAME}}
 
     steps:
       # 1️⃣ Repo’yu checkout et
@@ -26,7 +28,7 @@ jobs:
       - name: Build and push Docker image
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/my-html-app:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/my-html-app:latest
+          docker push $DOCKER_USERNAME/my-html-app:latest
 
       # 5️⃣ Push Docker image
       - name: Push Docker image
