@@ -11,10 +11,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Repo içeriğini indir
+      # 1 Repo içeriğini indir
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ HTML dosyasını göster
+      # 2 HTML dosyasını göster
       - name: Show HTML content
         run: cat index.html
+      # 3 show the secret
+      - name: show the secret
+        run: cat {{secrets_my_secret}}
