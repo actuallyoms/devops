@@ -10,7 +10,7 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     env:
-      DOCKER_USERNAME: ${{secrets_secrets.DOCKER_USERNAME}}
+      DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
 
     steps:
       # 1️⃣ Repo’yu checkout et
