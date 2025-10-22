@@ -25,4 +25,4 @@ jobs:
       - name: show the secret
         run: echo "$MY_SECRET"
       - name: show the variable
-        run: echo "${{MY_VARIABLE}}"
+        run: echo "${{vars.MY_VARIABLE}}"
