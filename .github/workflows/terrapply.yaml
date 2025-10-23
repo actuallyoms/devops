@@ -37,15 +37,15 @@ jobs:
 
       # 4️⃣ Terraform init
       - name: Terraform Init
-        working-directory: Terraform
+        working-directory: terraform
         run: terraform init -input=false
 
       # 5️⃣ Terraform plan
       - name: Terraform Plan
-        working-directory: Terraform
+        working-directory: terraform
         run: terraform plan -out=tfplan -input=false
 
       # 6️⃣ Terraform apply
       - name: Terraform Apply
-        working-directory: Terraform
+        working-directory: terraform
         run: terraform apply -auto-approve -input=false tfplan
