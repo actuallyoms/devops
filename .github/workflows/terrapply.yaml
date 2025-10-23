@@ -17,6 +17,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ARM_USE_OIDC: true   # Terraform backend OIDC ile login olacak
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     steps:
       # 1️⃣ Kodları checkout et
