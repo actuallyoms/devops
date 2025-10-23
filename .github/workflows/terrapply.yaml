@@ -1,28 +1,30 @@
-name: Terraform Apply (only on Terraform folder changes)
+name: Terraform Apply (terraform folder only, push)
 
 on:
   push:
     branches:
-      - master          # senin branch adın
+      - master           # senin branch
     paths:
-      - 'terraform/**'  # sadece Terraform klasörü değişirse tetiklenir
+      - 'terraform/**'   # sadece terraform klasörü değişirse tetiklenir
 
 permissions:
-  id-token: write
-  contents: read
+  id-token: write    # OIDC için gerekli
+  contents: read     # checkout için yeterli
 
 jobs:
   terraform:
-    name: "Terraform Deploy to Azure"
+    name: Terraform Deploy
     runs-on: ubuntu-latest
+    env:
+      ARM_USE_OIDC: true   # Terraform backend OIDC ile login olacak
 
     steps:
       # 1️⃣ Kodları checkout et
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Azure login (OIDC)
-      - name: Login to Azure
+      # 2️⃣ Azure login using OIDC
+      - name: Login to Azure using OIDC
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -47,5 +49,6 @@ jobs:
 
       # 6️⃣ Terraform apply
       - name: Terraform Apply
+        if: github.ref == 'refs/heads/master'
         working-directory: terraform
         run: terraform apply -auto-approve -input=false tfplan
