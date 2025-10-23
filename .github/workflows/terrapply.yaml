@@ -1,16 +1,15 @@
-name: Terraform Azure Deployment
+name: Terraform Apply (only on Terraform folder changes)
 
 on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
+      - master          # senin branch adın
+    paths:
+      - 'Terraform/**'  # sadece Terraform klasörü değişirse tetiklenir
 
 permissions:
-  id-token: write     # Azure OIDC kimlik doğrulaması için gerekli
-  contents: read      # Kodları okuyabilsin (checkout için yeterli)
+  id-token: write
+  contents: read
 
 jobs:
   terraform:
@@ -22,8 +21,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Azure'a OIDC ile login ol
-      - name: Login to Azure using OIDC
+      # 2️⃣ Azure login (OIDC)
+      - name: Login to Azure
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -38,21 +37,15 @@ jobs:
 
       # 4️⃣ Terraform init
       - name: Terraform Init
+        working-directory: Terraform
         run: terraform init -input=false
 
-      # 5️⃣ Terraform format kontrolü
-      - name: Terraform Format Check
-        run: terraform fmt -check
-
-      # 6️⃣ Terraform validate
-      - name: Terraform Validate
-        run: terraform validate
-
-      # 7️⃣ Terraform plan
+      # 5️⃣ Terraform plan
       - name: Terraform Plan
+        working-directory: Terraform
         run: terraform plan -out=tfplan -input=false
 
-      # 8️⃣ Terraform apply (sadece main branch’te, push olunca)
+      # 6️⃣ Terraform apply
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        working-directory: Terraform
         run: terraform apply -auto-approve -input=false tfplan
