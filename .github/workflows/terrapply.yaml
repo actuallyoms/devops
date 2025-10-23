@@ -5,7 +5,7 @@ on:
     branches:
       - master          # senin branch adın
     paths:
-      - 'Terraform/**'  # sadece Terraform klasörü değişirse tetiklenir
+      - 'terraform/**'  # sadece Terraform klasörü değişirse tetiklenir
 
 permissions:
   id-token: write
