@@ -21,7 +21,7 @@ spec:
   parameters:
     usePodIdentity: "false"
     useVMManagedIdentity: "true"
-    clientID: d573cbc8-976c-4ea3-8ac3-a6c8929ee733
+    userAssignedIdentityID: "d573cbc8-976c-4ea3-8ac3-a6c8929ee733"
     keyvaultName: prodsecrets-001
     cloudName: "AzurePublicCloud"
     tenantId: 82d83ea0-1c02-4101-8dc1-e24f1a64ad6e
@@ -104,6 +104,7 @@ spec:
       labels:
         tier: production
         app: mysql
+        azure.workload.identity/use: "true"  # <<<<< Workload Identity label eklendi
     spec:
       serviceAccountName: connectorsa  # UAMI ile ilişkili SA
       containers:
@@ -182,6 +183,7 @@ spec:
       labels:
         tier: production
         app: wordpress
+        azure.workload.identity/use: "true"  # 🔹 Workload Identity label eklendi
     spec:
       serviceAccountName: connectorsa  # 🔹 Azure Workload Identity bağlantısı
       containers:
