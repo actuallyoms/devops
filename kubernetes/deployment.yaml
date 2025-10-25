@@ -19,21 +19,16 @@ metadata:
 spec:
   provider: azure
   parameters:
-    useVMManagedIdentity: "true"
-    userAssignedIdentityID: "d573cbc8-976c-4ea3-8ac3-a6c8929ee733"
-    keyvaultName: prodsecrets-001
+    useVMManagedIdentity: "true"                 # UAMI kullanıyoruz
+    userAssignedIdentityID: "d573cbc8-976c-4ea3-8ac3-a6c8929ee733"  # Senin UAMI Client ID
+    keyvaultName: "prodsecrets-001"             # Key Vault adı
     cloudName: "AzurePublicCloud"
-    tenantId: 82d83ea0-1c02-4101-8dc1-e24f1a64ad6e
-    objects: |
-      - objectName: mysqlrootpassword
-        objectType: secret
-      - objectName: mysqldatabase
-        objectType: secret
-      - objectName: mysql-password
-        objectType: secret
-      - objectName: mysqluser
-        objectType: secret
-    tenantId: 82d83ea0-1c02-4101-8dc1-e24f1a64ad6e
+    tenantId: "82d83ea0-1c02-4101-8dc1-e24f1a64ad6e"
+    objects: |                                   # Her satır bir secret
+      objectName=mysqlrootpassword,objectType=secret
+      objectName=mysqldatabase,objectType=secret
+      objectName=mysql-password,objectType=secret
+      objectName=mysqluser,objectType=secret
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
