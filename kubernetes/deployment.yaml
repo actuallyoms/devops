@@ -20,15 +20,19 @@ spec:
   provider: azure
   parameters:
     useVMManagedIdentity: "true"
-    userAssignedIdentityID: "d573cbc8-976c-4ea3-8ac3-a6c8929ee733"  # <--- burası clientID değil, userAssignedIdentityID olmalı
+    userAssignedIdentityID: "d573cbc8-976c-4ea3-8ac3-a6c8929ee733"
     keyvaultName: prodsecrets-001
     cloudName: "AzurePublicCloud"
+    tenantId: 82d83ea0-1c02-4101-8dc1-e24f1a64ad6e
     objects: |
-      array:
-        - objectName=mysqlrootpassword,objectType=secret
-        - objectName=mysqldatabase,objectType=secret
-        - objectName=mysql-password,objectType=secret
-        - objectName=mysqluser,objectType=secret
+      - objectName: mysqlrootpassword
+        objectType: secret
+      - objectName: mysqldatabase
+        objectType: secret
+      - objectName: mysql-password
+        objectType: secret
+      - objectName: mysqluser
+        objectType: secret
     tenantId: 82d83ea0-1c02-4101-8dc1-e24f1a64ad6e
 ---
 apiVersion: v1
