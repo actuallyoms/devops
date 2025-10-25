@@ -19,24 +19,19 @@ metadata:
 spec:
   provider: azure
   parameters:
-    usePodIdentity: "false"
     useVMManagedIdentity: "true"
-    clientID: d573cbc8-976c-4ea3-8ac3-a6c8929ee733  # UAMI Client ID
+    userAssignedIdentityID: "d573cbc8-976c-4ea3-8ac3-a6c8929ee733"  # <--- burası clientID değil, userAssignedIdentityID olmalı
     keyvaultName: prodsecrets-001
     cloudName: "AzurePublicCloud"
     objects: |
       array:
-        - |
-          objectName: mysqlrootpassword
+        - objectName: mysqlrootpassword
           objectType: secret
-        - |
-          objectName: mysqldatabase
+        - objectName: mysqldatabase
           objectType: secret
-        - |
-          objectName: mysql-password
+        - objectName: mysql-password
           objectType: secret
-        - |
-          objectName: mysqluser
+        - objectName: mysqluser
           objectType: secret
     tenantId: 82d83ea0-1c02-4101-8dc1-e24f1a64ad6e
 ---
