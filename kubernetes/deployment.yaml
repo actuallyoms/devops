@@ -20,7 +20,7 @@ spec:
   provider: azure
   parameters:
     usePodIdentity: "false"
-    useVMManagedIdentity: "false"
+    useVMManagedIdentity: "true"
     clientID: d573cbc8-976c-4ea3-8ac3-a6c8929ee733  # UAMI Client ID
     keyvaultName: prodsecrets-001
     cloudName: "AzurePublicCloud"
