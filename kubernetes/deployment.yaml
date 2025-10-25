@@ -1,1 +1,261 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mysql-sa
+  namespace: production
+  annotations:
+    azure.workload.identity/client-id: d573cbc8-976c-4ea3-8ac3-a6c8929ee733
+---
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: mysql-kv-secrets
+  namespace: production
+spec:
+  provider: azure
+  parameters:
+    usePodIdentity: "false"
+    useVMManagedIdentity: "false"
+    clientID: d573cbc8-976c-4ea3-8ac3-a6c8929ee733  # UAMI Client ID
+    keyvaultName: prodsecrets-001
+    cloudName: "AzurePublicCloud"
+    objects: |
+      array:
+        - |
+          objectName: mysqlrootpassword
+          objectType: secret
+        - |
+          objectName: mysqldatabase
+          objectType: secret
+        - |
+          objectName: mysql-password
+          objectType: secret
+        - |
+          objectName: mysqluser
+          objectType: secret
+    tenantId: 82d83ea0-1c02-4101-8dc1-e24f1a64ad6e
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-prod-claim
+  namespace: production
+  labels:
+    tier: production
+    app: mysql
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wp-prod-claim
+  namespace: production
+  labels:
+    tier: production
+    app: wordpress
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment
+  namespace: production
+  labels:
+    tier: production
+    app: mysql
+spec:
+  selector:
+    matchLabels:
+      tier: production
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        tier: production
+        app: mysql
+    spec:
+      serviceAccountName: connectorsa  # UAMI ile ilişkili SA
+      containers:
+      - name: mysql-prod
+        image: mysql:5.6
+        env:
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-prod-secret
+              key: mysqluser
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-prod-secret
+              key: mysql-password
+        - name: MYSQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: mysql-prod-secret
+              key: mysqldatabase
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-prod-secret
+              key: mysqlrootpassword
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "250m"
+        ports:
+          - containerPort: 3306
+            name: mysql-prod-port
+        volumeMounts:
+          - name: mysql-prod-pv
+            mountPath: /var/lib/mysql
+          - name: secrets-store-inline
+            mountPath: "/mnt/secrets"
+            readOnly: true
+      nodeSelector:
+        tier: production
+      tolerations:
+      - key: "tier"
+        operator: "Equal"
+        value: "production"
+        effect: "NoSchedule"
+      volumes:
+        - name: mysql-prod-pv
+          persistentVolumeClaim:
+            claimName: mysql-prod-claim
+        - name: secrets-store-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "mysql-kv-secrets"
 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wp-deployment
+  namespace: production
+  labels:
+    tier: production
+    app: wordpress
+spec:
+  selector:
+    matchLabels:
+      tier: production
+      app: wordpress
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        tier: production
+        app: wordpress
+    spec:
+      serviceAccountName: connectorsa  # 🔹 Azure Workload Identity bağlantısı
+      containers:
+      - image: wordpress:5.6
+        name: wp-prod
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: mysql-prod-svc
+        - name: WORDPRESS_DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-prod-secret
+              key: mysqluser
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-prod-secret
+              key: mysql-password
+        - name: WORDPRESS_DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: mysql-prod-secret
+              key: mysqldatabase
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "250m"
+        ports:
+        - containerPort: 80
+          name: wp-prod-port
+        volumeMounts:
+        - name: wp-prod-pv
+          mountPath: /var/www/html
+        - name: secrets-store-inline
+          mountPath: "/mnt/secrets"
+          readOnly: true
+      nodeSelector:
+        tier: production
+      tolerations:
+      - key: "tier"
+        operator: "Equal"
+        value: "production"
+        effect: "NoSchedule"
+      volumes:
+      - name: wp-prod-pv
+        persistentVolumeClaim:
+          claimName: wp-prod-claim
+      - name: secrets-store-inline
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: "mysql-kv-secrets"
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - mysql
+            topologyKey: kubernetes.io/hostname
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-prod-svc
+  namespace: production
+  labels:
+    tier: production
+spec:
+  selector:
+    tier: production
+    app: mysql
+  ports:
+  - port: 3306
+    targetPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wp-prod-svc
+  namespace: production
+  labels:
+    tier: production
+    app: wordpress
+spec:
+  selector:
+    tier: production
+    app: wordpress
+  ports:
+  - port: 80
+    targetPort: 80
