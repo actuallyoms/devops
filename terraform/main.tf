@@ -16,6 +16,18 @@ resource "azurerm_kubernetes_cluster" "aks" {
   resource_group_name = azurerm_resource_group.rg.name      # RG adı
   dns_prefix          = "${var.aks_name}-dns"
 
+  # Default/System Node Pool (zorunlu)
+  default_node_pool {
+    name       = "systempool"
+    vm_size    = "Standard_DS2_v2"
+    node_count = 1
+    mode       = "System"
+
+    node_labels = {
+      tier = "production"
+    }
+  }
+
   # Identity
   identity {
     type = "SystemAssigned"
@@ -40,19 +52,42 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
-# USER NODE POOL (4 node)
+# USER NODE POOL (3 worker node)
 resource "azurerm_kubernetes_cluster_node_pool" "workers" {
   name                  = "workerpool"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
-  vm_size               = "Standard_DS2_v2"  # düşük maliyetli
-  node_count            = 4
+  vm_size               = "Standard_DS2_v2"
+  node_count            = 3
+  mode                  = "User"
+
+  # Node bazlı label'lar için ayrı ayrı node pool kullanmamız gerekiyor.
+  # Terraform tek node pool içinde farklı label veremez, o yüzden 3 ayrı pool yapacağız:
+}
+
+# --- Worker 1 ve 2: tier=production ---
+resource "azurerm_kubernetes_cluster_node_pool" "worker_prod" {
+  count                 = 2
+  name                  = "worker-prod-${count.index + 1}"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
+  vm_size               = "Standard_DS2_v2"
+  node_count            = 1
   mode                  = "User"
 
   node_labels = {
     tier = "production"
   }
+}
 
-  tags = {
-    purpose = "app-workers"
+# --- Worker 3: tier=test ---
+resource "azurerm_kubernetes_cluster_node_pool" "worker_test" {
+  name                  = "worker-test"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
+  vm_size               = "Standard_DS2_v2"
+  node_count            = 1
+  mode                  = "User"
+
+  node_labels = {
+    tier = "test"
   }
 }
+
