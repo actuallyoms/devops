@@ -10,7 +10,7 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
-  - host: companyblog.example.com
+  - host: test.example.com
     http:
       paths:
       - pathType: Prefix
