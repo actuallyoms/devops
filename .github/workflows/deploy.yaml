@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'kubernetes/**'   # sadece kubernetes/ klasörü altındaki dosyalar değişirse çalışacak
 
 env:
   RESOURCE_GROUP: aks-rg
