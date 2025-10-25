@@ -9,7 +9,7 @@ on:
 
 env:
   RESOURCE_GROUP: aks-rg
-  CLUSTER_NAME: my-aks-cluster
+  CLUSTER_NAME: omer-aks-cluster
 
 jobs:
   deploy:
