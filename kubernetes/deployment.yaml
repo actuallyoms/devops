@@ -25,14 +25,10 @@ spec:
     cloudName: "AzurePublicCloud"
     objects: |
       array:
-        - objectName: mysqlrootpassword
-          objectType: secret
-        - objectName: mysqldatabase
-          objectType: secret
-        - objectName: mysql-password
-          objectType: secret
-        - objectName: mysqluser
-          objectType: secret
+        - objectName=mysqlrootpassword,objectType=secret
+        - objectName=mysqldatabase,objectType=secret
+        - objectName=mysql-password,objectType=secret
+        - objectName=mysqluser,objectType=secret
     tenantId: 82d83ea0-1c02-4101-8dc1-e24f1a64ad6e
 ---
 apiVersion: v1
