@@ -21,12 +21,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
     name       = "systempool"
     vm_size    = "Standard_DS2_v2"
     node_count = 1
-    mode       = "System"
-
-    node_labels = {
-      tier = "production"
-    }
-  }
 
   # Identity
   identity {
