@@ -16,7 +16,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   resource_group_name = azurerm_resource_group.rg.name
   dns_prefix          = "${var.aks_name}-dns"
 
-  # Default/System Node Pool (zorunlu)
+  # Default / system node pool (zorunlu)
   default_node_pool {
     name       = "systempool"
     vm_size    = "Standard_DS2_v2"
@@ -27,23 +27,21 @@ resource "azurerm_kubernetes_cluster" "aks" {
     }
   }
 
-  # Identity
   identity {
     type = "SystemAssigned"
   }
 
-  # OIDC ve Workload Identity
+  # OIDC ve workload identity
   oidc_issuer_enabled       = true
   workload_identity_enabled = true
 
-  # Key Vault CSI Driver
+  # Key Vault Secrets Provider (CSI) addon
   key_vault_secrets_provider {
     secret_rotation_enabled = false
   }
 
-  # Network
   network_profile {
-    network_plugin = "azure"   # Azure CNI aktif
+    network_plugin = "azure"
   }
 
   tags = {
@@ -51,12 +49,11 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
-# --- Worker Node Pools ---
-
-# Worker 1 ve 2: tier=production
+# Worker node pools
+# 2 adet production worker (her biri 1 node olacak)
 resource "azurerm_kubernetes_cluster_node_pool" "worker_prod" {
   count                 = 2
-  name                  = "worker-prod-${count.index + 1}"
+  name                  = "workerprod${count.index + 1}"   # workerprod1, workerprod2 (her ikisi 1-12 char içinde)
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
   vm_size               = "Standard_DS2_v2"
   node_count            = 1
@@ -67,9 +64,9 @@ resource "azurerm_kubernetes_cluster_node_pool" "worker_prod" {
   }
 }
 
-# Worker 3: tier=test
+# 1 adet test worker
 resource "azurerm_kubernetes_cluster_node_pool" "worker_test" {
-  name                  = "worker-test"
+  name                  = "workertest"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
   vm_size               = "Standard_DS2_v2"
   node_count            = 1
@@ -79,4 +76,5 @@ resource "azurerm_kubernetes_cluster_node_pool" "worker_test" {
     tier = "test"
   }
 }
+
 
