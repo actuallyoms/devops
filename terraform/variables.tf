@@ -9,6 +9,7 @@ variable "location" {
 variable "rg_name" {
   description = "Resource Group adı"
   type        = string
+  default     = "aks-rg"
 }
 
 
