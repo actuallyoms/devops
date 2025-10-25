@@ -10,41 +10,27 @@ resource "azurerm_resource_group" "rg" {
 }
 
 
-# --- AKS Cluster Tanımı ---
-
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = var.aks_name
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location  # RG lokasyonu
+  resource_group_name = azurerm_resource_group.rg.name      # RG adı
   dns_prefix          = "${var.aks_name}-dns"
 
-  # 1️⃣ SYSTEM NODE POOL (1 node)
-  default_node_pool {
-    name       = "systempool"
-    vm_size    = "Standard_DS2_v2"   # düşük maliyetli, 2 CPU, 7 GB RAM
-    node_count = 1
-    mode       = "System"
-
-    node_labels = {
-      tier = "production"
-    }
-  }
-
-  # 2️⃣ Kimlik (Identity)
+  # Identity
   identity {
     type = "SystemAssigned"
   }
 
-  # 3️⃣ OIDC ve Workload Identity aktif etme
+  # OIDC ve Workload Identity
   oidc_issuer_enabled       = true
   workload_identity_enabled = true
 
-  # 4️⃣ Key Vault CSI Driver (Secrets Store Provider)
+  # Key Vault CSI Driver
   key_vault_secrets_provider {
     secret_rotation_enabled = false
   }
 
-  # 5️⃣ Ağ profili (network ayarları)
+  # Network
   network_profile {
     network_plugin = "azure"   # Azure CNI aktif
   }
@@ -54,11 +40,11 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
-# --- 6️⃣ USER NODE POOL (4 node) ---
+# USER NODE POOL (4 node)
 resource "azurerm_kubernetes_cluster_node_pool" "workers" {
   name                  = "workerpool"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
-  vm_size               = "Standard_DS2_v2"   # düşük maliyetli, 2 CPU, 7 GB RAM
+  vm_size               = "Standard_DS2_v2"  # düşük maliyetli
   node_count            = 4
   mode                  = "User"
 
@@ -70,4 +56,3 @@ resource "azurerm_kubernetes_cluster_node_pool" "workers" {
     purpose = "app-workers"
   }
 }
-
