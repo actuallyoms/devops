@@ -1,15 +1,13 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: wp-prod-ingress
+  name: production-ingress
+  namespace: production
   labels:
     tier: production
-    app: wordpress
-  namespace: production
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
   - host: companyblog.example.com
@@ -20,5 +18,5 @@ spec:
         backend:
           service:
             name: wp-prod-svc
-            port: 
+            port:
               number: 80
