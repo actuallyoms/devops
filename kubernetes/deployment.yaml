@@ -21,36 +21,22 @@ spec:
   parameters:
     usePodIdentity: "false"
     useVMManagedIdentity: "true"
-    userAssignedIdentityID: "d573cbc8-976c-4ea3-8ac3-a6c8929ee733"
+    clientID: d573cbc8-976c-4ea3-8ac3-a6c8929ee733  # UAMI Client ID
     keyvaultName: prodsecrets-001
     cloudName: "AzurePublicCloud"
     tenantId: 82d83ea0-1c02-4101-8dc1-e24f1a64ad6e
-    objects: |
-      array:
-      - |
-        objectName: mysqlrootpassword
-        objectType: secret
-      - |
-        objectName: mysqldatabase
-        objectType: secret
-      - |
-        objectName: mysql-password
-        objectType: secret
-      - |
-        objectName: mysqluser
-        objectType: secret
   secretObjects:
     - secretName: mysql-prod-secret
       type: Opaque
       data:
-        - key: MYSQL_ROOTPASSWORD
-          objectName: mysqlrootpassword
-        - key: MYSQL_USER
-          objectName: mysqluser
-        - key: MYSQL_PASSWORD
-          objectName: mysql-password
-        - key: MYSQL_DATABASE
-          objectName: mysqldatabase
+        - objectName: mysqluser
+          key: mysqluser
+        - objectName: mysql-password
+          key: mysql-password
+        - objectName: mysqldatabase
+          key: mysqldatabase
+        - objectName: mysqlrootpassword
+          key: mysqlrootpassword
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
