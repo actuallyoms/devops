@@ -21,21 +21,20 @@ spec:
   parameters:
     usePodIdentity: "false"
     useVMManagedIdentity: "true"
-    clientID: "<UAMI-CLIENT-ID>"           # User Assigned Managed Identity Client ID
+    clientID: d573cbc8-976c-4ea3-8ac3-a6c8929ee733
     keyvaultName: prodsecrets-001
     cloudName: "AzurePublicCloud"
-    tenantId: "<TENANT-ID>"
+    tenantId: 82d83ea0-1c02-4101-8dc1-e24f1a64ad6e
     objects: |
-      array:
-        - objectName: mysqlrootpassword
-          objectType: secret
-        - objectName: mysqluser
-          objectType: secret
-        - objectName: mysql-password
-          objectType: secret
-        - objectName: mysqldatabase
-          objectType: secret
-  secretObjects:                            # Kubernetes Secret oluşturma
+      - objectName: mysqlrootpassword
+        objectType: secret
+      - objectName: mysqluser
+        objectType: secret
+      - objectName: mysql-password
+        objectType: secret
+      - objectName: mysqldatabase
+        objectType: secret
+  secretObjects:
     - secretName: mysql-prod-secret
       type: Opaque
       data:
