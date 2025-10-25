@@ -1,0 +1,38 @@
+name: Deploy to AKS
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'kubernetes/**'   # sadece kubernetes/ klasörü altındaki dosyalar değişirse çalışacak
+
+env:
+  RESOURCE_GROUP: aks-rg
+  CLUSTER_NAME: my-aks-cluster
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Get AKS credentials
+        run: |
+          az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --overwrite-existing
+
+      - name: Deploy NGINX Ingress Controller
+        run: kubectl apply -f kubernetes/nginx-controller.yaml
+
+      - name: Deploy WordPress + MySQL
+        run: kubectl apply -f kubernetes/deployment.yaml
+
+      - name: Deploy Ingress
+        run: kubectl apply -f kubernetes/ingress.yaml
