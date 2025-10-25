@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -34,6 +35,13 @@ spec:
           - --controller-class=k8s.io/ingress-nginx
           - --ingress-class=nginx
           - --publish-service=$(POD_NAMESPACE)/ingress-nginx-controller
+          - --enable-ssl-passthrough
+          - --validating-webhook=:8443
+        env:
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
         ports:
           - name: http
             containerPort: 80
