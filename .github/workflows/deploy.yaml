@@ -3,7 +3,9 @@ name: Deploy to AKS
 on:
   push:
     branches:
-      - main
+      - master
+    paths:
+      - 'kubernetes/**'   # sadece terraform klasörü değişirse tetiklenir
 
 env:
   RESOURCE_GROUP: aks-rg
