@@ -1,4 +1,4 @@
-name: Terraform Apply (terraform folder only, push)
+name: Terraform Apply (terraform folder only,push)
 
 on:
   push:
