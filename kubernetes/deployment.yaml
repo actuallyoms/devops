@@ -42,6 +42,20 @@ spec:
     keyvaultName: db-wp-kv
     cloudName: "AzurePublicCloud"
     tenantId: 82d83ea0-1c02-4101-8dc1-e24f1a64ad6e
+    objects: |
+      array:
+        - |
+          objectName: mysqluser
+          objectType: secret
+        - |
+          objectName: mysql-password
+          objectType: secret
+        - |
+          objectName: mysqldatabase
+          objectType: secret
+        - |
+          objectName: mysqlrootpassword
+          objectType: secret
   secretObjects:
     - secretName: mysql-prod-secret
       type: Opaque
@@ -69,18 +83,32 @@ spec:
     keyvaultName: db-wp-kv
     cloudName: "AzurePublicCloud"
     tenantId: 82d83ea0-1c02-4101-8dc1-e24f1a64ad6e
+    objects: |
+      array:
+        - |
+          objectName: mysqluser
+          objectType: secret
+        - |
+          objectName: mysql-password
+          objectType: secret
+        - |
+          objectName: mysqldatabase
+          objectType: secret
+        - |
+          objectName: mysqlrootpassword
+          objectType: secret
   secretObjects:
     - secretName: wp-prod-secret
       type: Opaque
       data:
         - objectName: mysqluser
-          key: db-user
+          key: mysqluser
         - objectName: mysql-password
-          key: db-password
+          key: mysql-password
         - objectName: mysqldatabase
-          key: db-name
+          key: mysqldatabase
         - objectName: mysqlrootpassword
-          key: db-root-password
+          key: mysqlrootpassword
 ---
 # -----------------------------
 # PVCs
@@ -201,17 +229,17 @@ spec:
           valueFrom:
             secretKeyRef:
               name: wp-prod-secret
-              key: db-user
+              key: mysqluser
         - name: WORDPRESS_DB_PASSWORD
           valueFrom:
             secretKeyRef:
               name: wp-prod-secret
-              key: db-password
+              key: mysql-password
         - name: WORDPRESS_DB_NAME
           valueFrom:
             secretKeyRef:
               name: wp-prod-secret
-              key: db-name
+              key: mysqldatabase
         volumeMounts:
         - name: wordpress-pv
           mountPath: /var/www/html
