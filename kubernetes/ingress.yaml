@@ -17,6 +17,6 @@ spec:
         path: /
         backend:
           service:
-            name: wp-prod-svc
+            name: wordpress-svc
             port:
               number: 80
