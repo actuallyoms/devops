@@ -39,7 +39,7 @@ spec:
     usePodIdentity: "false"
     useVMManagedIdentity: "true"
     clientID: eacfa37c-6247-44ff-891f-582614ca5cbf
-    keyvaultName: prodsecrets-001
+    keyvaultName: db-wp-kv
     cloudName: "AzurePublicCloud"
     tenantId: 82d83ea0-1c02-4101-8dc1-e24f1a64ad6e
   secretObjects:
@@ -66,7 +66,7 @@ spec:
     usePodIdentity: "false"
     useVMManagedIdentity: "true"
     clientID: 30687c66-ca17-4187-9cbf-04ee407726c8
-    keyvaultName: prodsecrets-001
+    keyvaultName: db-wp-kv
     cloudName: "AzurePublicCloud"
     tenantId: 82d83ea0-1c02-4101-8dc1-e24f1a64ad6e
   secretObjects:
