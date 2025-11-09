@@ -74,13 +74,13 @@ spec:
       type: Opaque
       data:
         - objectName: mysqluser
-          key: mysqluser
+          key: db-user
         - objectName: mysql-password
-          key: mysql-password
+          key: db-password
         - objectName: mysqldatabase
-          key: mysqldatabase
+          key: db-name
         - objectName: mysqlrootpassword
-          key: mysqlrootpassword
+          key: db-root-password
 ---
 # -----------------------------
 # PVCs
@@ -207,6 +207,11 @@ spec:
             secretKeyRef:
               name: wp-prod-secret
               key: db-password
+        - name: WORDPRESS_DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: wp-prod-secret
+              key: db-name
         volumeMounts:
         - name: wordpress-pv
           mountPath: /var/www/html
