@@ -36,8 +36,8 @@ metadata:
 spec:
   provider: azure
   parameters:
-    usePodIdentity: "false"
-    useVMManagedIdentity: "true"
+    usePodIdentity: "true"
+    useVMManagedIdentity: "false"
     clientID: eacfa37c-6247-44ff-891f-582614ca5cbf
     keyvaultName: db-wp-kv
     cloudName: "AzurePublicCloud"
@@ -63,8 +63,8 @@ metadata:
 spec:
   provider: azure
   parameters:
-    usePodIdentity: "false"
-    useVMManagedIdentity: "true"
+    usePodIdentity: "true"
+    useVMManagedIdentity: "false"
     clientID: 30687c66-ca17-4187-9cbf-04ee407726c8
     keyvaultName: db-wp-kv
     cloudName: "AzurePublicCloud"
